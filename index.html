@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayurveda Hospital Management System</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.8/dist/umd/supabase.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 font-sans flex h-screen overflow-hidden">
+
+    <div id="sidebar" class="bg-slate-900 text-white w-64 transition-all duration-300 flex flex-col justify-between hidden md:flex">
+        <div class="p-4">
+            <div class="flex items-center justify-between mb-6">
+                <h1 id="logo" class="text-xl font-bold tracking-wider text-emerald-400">AYUR-HMS</h1>
+                <button onclick="toggleSidebar()" class="text-white hover:text-emerald-400"><i class="fas fa-bars"></i></button>
+            </div>
+            <nav class="space-y-2">
+                <button onclick="switchView('dashboard')" class="w-full text-left py-2.5 px-4 rounded hover:bg-slate-800 transition flex items-center gap-3"><i class="fas fa-chart-pie w-5"></i> <span>Dashboard</span></button>
+                <button onclick="switchView('new-patient')" class="w-full text-left py-2.5 px-4 rounded hover:bg-slate-800 transition flex items-center gap-3"><i class="fas fa-user-plus w-5"></i> <span>New Patient Entry</span></button>
+                <button onclick="switchView('old-patients')" class="w-full text-left py-2.5 px-4 rounded hover:bg-slate-800 transition flex items-center gap-3"><i class="fas fa-folder-open w-5"></i> <span>Old Patient List</span></button>
+                <button onclick="switchView('therapy')" class="w-full text-left py-2.5 px-4 rounded hover:bg-slate-800 transition flex items-center gap-3"><i class="fas fa-spa w-5"></i> <span>Therapy List</span></button>
+                <button onclick="switchView('inventory')" class="w-full text-left py-2.5 px-4 rounded hover:bg-slate-800 transition flex items-center gap-3"><i class="fas fa-boxes w-5"></i> <span>Inventory</span></button>
+                <button onclick="switchView('bills')" class="w-full text-left py-2.5 px-4 rounded hover:bg-slate-800 transition flex items-center gap-3"><i class="fas fa-file-invoice-dollar w-5"></i> <span>Bills</span></button>
+                <button onclick="switchView('statistics')" class="w-full text-left py-2.5 px-4 rounded hover:bg-slate-800 transition flex items-center gap-3"><i class="fas fa-chart-line w-5"></i> <span>Statistics</span></button>
+            </nav>
+        </div>
+    </div>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <header class="bg-white shadow px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="md:hidden text-slate-800"><i class="fas fa-bars text-xl"></i></button>
+                <h2 id="view-title" class="text-2xl font-semibold text-gray-800">Dashboard</h2>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-gray-600 bg-slate-100 py-1.5 px-3 rounded-full">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 anonymity-pulse"></span> Clinic Network Connected
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-6">
+            
+            <div id="view-dashboard" class="view-panel space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div onclick="filterDashboard('Appointments')" class="bg-white p-6 rounded-xl shadow border-l-4 border-blue-500 cursor-pointer hover:shadow-md transition">
+                        <div class="text-gray-500 text-sm font-medium uppercase">Appointments</div>
+                        <div id="count-appointments" class="text-3xl font-bold text-gray-800 mt-1">0</div>
+                    </div>
+                    <div onclick="filterDashboard('Waiting')" class="bg-white p-6 rounded-xl shadow border-l-4 border-amber-500 cursor-pointer hover:shadow-md transition">
+                        <div class="text-gray-500 text-sm font-medium uppercase">Waiting List</div>
+                        <div id="count-waiting" class="text-3xl font-bold text-gray-800 mt-1">0</div>
+                    </div>
+                    <div onclick="filterDashboard('Pharmacy')" class="bg-white p-6 rounded-xl shadow border-l-4 border-emerald-500 cursor-pointer hover:shadow-md transition">
+                        <div class="text-gray-500 text-sm font-medium uppercase">Pharmacy</div>
+                        <div id="count-pharmacy" class="text-3xl font-bold text-gray-800 mt-1">0</div>
+                    </div>
+                    <div onclick="filterDashboard('Procedures')" class="bg-white p-6 rounded-xl shadow border-l-4 border-purple-500 cursor-pointer hover:shadow-md transition">
+                        <div class="text-gray-500 text-sm font-medium uppercase">Procedures</div>
+                        <div id="count-procedures" class="text-3xl font-bold text-gray-800 mt-1">0</div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow overflow-hidden">
+                    <div class="bg-slate-100 px-6 py-4 border-b border-gray-200">
+                        <h3 id="queue-title" class="font-semibold text-gray-700">Patients in Waiting Queue</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-500 uppercase text-xs tracking-wider border-b border-gray-200">
+                                    <th class="px-6 py-3 font-medium">Patient Name</th>
+                                    <th class="px-6 py-3 font-medium">Age/Sex</th>
+                                    <th class="px-6 py-3 font-medium">Assigned Doctor</th>
+                                    <th class="px-6 py-3 font-medium">Status</th>
+                                    <th class="px-6 py-3 font-medium text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-queue-tbody" class="divide-y divide-gray-100 text-sm text-gray-700">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-new-patient" class="view-panel hidden max-w-4xl mx-auto bg-white p-8 rounded-xl shadow">
+                <form id="new-patient-form" onsubmit="saveNewPatient(event)" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Patient Name *</label>
+                            <input type="text" id="p-name" required class="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Age *</label>
+                            <input type="number" id="p-age" required class="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Gender *</label>
+                            <select id="p-gender" required class="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-emerald-500">
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                            <input type="text" id="p-address" class="w-full border border-gray-300 rounded px-3 py-2 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                            <input type="text" id="p-city" class="w-full border border-gray-300 rounded px-3 py-2 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">State</label>
+                            <input type="text" id="p-state" class="w-full border border-gray-300 rounded px-3 py-2 outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Contact No *</label>
+                            <input type="tel" id="p-contact" required class="w-full border border-gray-300 rounded px-3 py-2 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email ID</label>
+                            <input type="email" id="p-email" class="w-full border border-gray-300 rounded px-3 py-2 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Name of Doctor *</label>
+                            <select id="p-doctor" required class="w-full border border-gray-300 rounded px-3 py-2 outline-none">
+                                <option value="Vd Chandrakant kulkarni">Vd Chandrakant kulkarni</option>
+                                <option value="Vd Charulata Kulkarni">Vd Charulata Kulkarni</option>
+                                <option value="Vd Nand Kulkarni">Vd Nand Kulkarni</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="border-t pt-6 grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-50 p-4 rounded-lg">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Consultation Fees</label>
+                            <input type="number" id="p-fees" value="0" class="w-full border border-gray-300 rounded px-3 py-2 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Paid Amount</label>
+                            <input type="number" id="p-paid" value="0" class="w-full border border-gray-300 rounded px-3 py-2 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Mode of Payment</label>
+                            <select id="p-paymode" class="w-full border border-gray-300 rounded px-3 py-2 outline-none">
+                                <option value="Cash">Cash</option>
+                                <option value="QR">QR</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-4">
+                        <button type="button" onclick="switchView('dashboard')" class="px-5 py-2 border rounded text-gray-700 hover:bg-gray-100">Cancel</button>
+                        <button type="submit" class="px-6 py-2 bg-emerald-600 text-white rounded font-medium hover:bg-emerald-700 shadow-sm">Save & Register</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="view-history-sheet" class="view-panel hidden max-w-5xl mx-auto bg-white p-8 rounded-xl shadow space-y-6">
+                <div class="border-b pb-4">
+                    <h3 class="text-xl font-bold text-slate-800" id="hist-patient-name">Patient Name</h3>
+                    <p class="text-sm text-gray-500" id="hist-patient-meta">Patient Info Metadata Line</p>
+                </div>
+
+                <form id="history-form" onsubmit="saveClinicalHistory(event)">
+                    <h4 class="text-emerald-700 font-semibold mb-3 border-b pb-1 text-md uppercase tracking-wider">Clinical Manifestation (Nidana Panchaka)</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Hetu (Causes)</label><textarea id="h-hetu" rows="2" class="w-full border border-gray-300 rounded p-2 outline-none"></textarea></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Purvarup (Prodromal Symptoms)</label><textarea id="h-purvarup" rows="2" class="w-full border border-gray-300 rounded p-2 outline-none"></textarea></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Rup (Manifested Symptoms)</label><textarea id="h-rup" rows="2" class="w-full border border-gray-300 rounded p-2 outline-none"></textarea></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Upashay-Anupashay (Therapeutic Trial)</label><textarea id="h-upashay" rows="2" class="w-full border border-gray-300 rounded p-2 outline-none"></textarea></div>
+                    </div>
+
+                    <h4 class="text-emerald-700 font-semibold mb-3 border-b pb-1 text-md uppercase tracking-wider">Ashtavidha Parikshanam & Attributes</h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 bg-slate-50 p-4 rounded-lg">
+                        <div><label class="text-xs text-gray-600">Nadi</label><input type="text" id="p-nadi" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs text-gray-600">Mutra</label><input type="text" id="p-mutra" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs text-gray-600">Mala</label><input type="text" id="p-mala" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs text-gray-600">Jihva</label><input type="text" id="p-jihva" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs text-gray-600">Shabd</label><input type="text" id="p-shabd" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs text-gray-600">Sparsh</label><input type="text" id="p-sparsh" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs text-gray-600">Druk</label><input type="text" id="p-druk" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs text-gray-600">Akruti</label><input type="text" id="p-akruti" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 mb-6">
+                        <div><label class="text-xs text-gray-600">Agni</label><input type="text" id="h-agni" class="w-full border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs text-gray-600">Prakruti</label><input type="text" id="h-prakruti" class="w-full border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs text-gray-600">Satmya</label><input type="text" id="h-satmya" class="w-full border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs text-gray-600">Satva</label><input type="text" id="h-satva" class="w-full border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs text-gray-600">Ahara</label><input type="text" id="h-ahara" class="w-full border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                    </div>
+
+                    <h4 class="text-emerald-700 font-semibold mb-3 border-b pb-1 text-md uppercase tracking-wider">Investigations & Clinical Outcome Matrix (Vyadhivinishchayah)</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div><label class="block text-xs text-gray-600 mb-1">Investigations</label><textarea id="h-investigations" rows="2" class="w-full border border-gray-300 rounded p-2 outline-none"></textarea></div>
+                        <div><label class="block text-xs text-gray-600 mb-1">Vyadhivinishchayah (Provisional)</label><textarea id="h-provisional" rows="2" class="w-full border border-gray-300 rounded p-2 outline-none"></textarea></div>
+                        <div><label class="block text-xs text-gray-600 mb-1">Vyadhivinishchayah (Final)</label><textarea id="h-final" rows="2" class="w-full border border-gray-300 rounded p-2 outline-none"></textarea></div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded shadow-sm tracking-wide">Save Examination Parameters & Load Prescription</button>
+                </form>
+            </div>
+
+            <div id="view-prescription" class="view-panel hidden max-w-4xl mx-auto bg-white p-8 rounded-xl shadow space-y-6">
+                <div class="border-b pb-2 flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-slate-800">Rx - Medicinal Prescription Scheme</h3>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="addRxRow('medicine')" class="bg-blue-600 text-white px-3 py-1.5 rounded text-xs font-semibold hover:bg-blue-700"><i class="fas fa-plus mr-1"></i> Add Medicine</button>
+                        <button type="button" onclick="addRxRow('diet')" class="bg-amber-600 text-white px-3 py-1.5 rounded text-xs font-semibold hover:bg-amber-700"><i class="fas fa-plus mr-1"></i> Add Diet advice</button>
+                        <button type="button" onclick="addRxRow('procedure')" class="bg-purple-600 text-white px-3 py-1.5 rounded text-xs font-semibold hover:bg-purple-700"><i class="fas fa-plus mr-1"></i> Add Procedure</button>
+                    </div>
+                </div>
+
+                <div class="space-y-4" id="prescription-items-container">
+                    </div>
+
+                <div class="border-t pt-6 grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-50 p-4 rounded-xl">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Follow up after (Days)</label>
+                        <input type="number" id="rx-followup" class="w-full border border-gray-300 rounded px-3 py-2 outline-none bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Total Medicine Bill Amount</label>
+                        <input type="number" id="rx-bill" value="0" class="w-full border border-gray-300 rounded px-3 py-2 outline-none bg-white">
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-4">
+                    <button type="button" onclick="switchView('dashboard')" class="px-5 py-2 border rounded text-gray-700 hover:bg-gray-100">Discard</button>
+                    <button type="button" onclick="submitPrescription()" class="px-6 py-2 bg-emerald-600 text-white font-medium rounded hover:bg-emerald-700 shadow-sm">Save Record & Move to Pharmacy</button>
+                </div>
+            </div>
+
+            <div id="view-pharmacy-dispense" class="view-panel hidden max-w-3xl mx-auto bg-white p-8 rounded-xl shadow space-y-6">
+                <div class="border-b pb-4">
+                    <h3 class="text-xl font-bold text-slate-800" id="pharm-patient-name">Patient Name</h3>
+                    <p class="text-sm text-gray-500">Active Formulary Verification</p>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-lg space-y-3" id="pharmacy-prescription-view">
+                    </div>
+
+                <div class="border-t pt-6 grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase">Total Bill</label>
+                        <input type="number" id="p-total-bill" readonly class="w-full bg-gray-100 border rounded px-3 py-2 font-bold mt-1 text-slate-800">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase">Amount Paid</label>
+                        <input type="number" id="p-amt-paid" oninput="calculatePharmacyBalance()" class="w-full border-2 border-emerald-500 rounded px-3 py-2 mt-1 font-bold outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase">Balance Due</label>
+                        <input type="number" id="p-balance" readonly class="w-full bg-gray-100 border rounded px-3 py-2 text-red-600 font-bold mt-1">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase">Payment Mode</label>
+                        <select id="p-pharm-paymode" class="w-full border rounded px-3 py-2 mt-1 outline-none">
+                            <option value="Cash">Cash</option>
+                            <option value="QR">QR</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="finalizePharmacyTransaction()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded shadow uppercase tracking-wide text-sm">Discharge Patient & Lock Records</button>
+            </div>
+
+            <div id="view-old-patients" class="view-panel hidden bg-white p-6 rounded-xl shadow">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Historical Patient Database</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 uppercase text-xs border-b border-gray-200">
+                                <th class="p-3">Name</th>
+                                <th class="p-3">Age/Sex</th>
+                                <th class="p-3">Contact</th>
+                                <th class="p-3">Assigned Doctor</th>
+                                <th class="p-3">Current Pipeline Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="old-patients-tbody" class="divide-y text-gray-700 divide-gray-100">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="view-therapy" class="view-panel hidden bg-white p-6 rounded-xl shadow"><h3>Therapy Tracking Ledger</h3></div>
+            <div id="view-inventory" class="view-panel hidden bg-white p-6 rounded-xl shadow"><h3>Material & Stock Inventory Console</h3></div>
+            <div id="view-bills" class="view-panel hidden bg-white p-6 rounded-xl shadow"><h3>Invoices & Billing Statements</h3></div>
+            <div id="view-statistics" class="view-panel hidden bg-white p-6 rounded-xl shadow"><h3>Analytics & Clinic Metrics</h3></div>
+
+        </main>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://zbkkeorfljwbidbxkoor.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_hcgJxA9sl9x4Y6EVbmpiQw_8dfU6NoL';
+        
+        // Verified Object initialization blueprint template
+        const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+            auth: { persistSession: false, autoRefreshToken: false }
+        });
+
+        let currentActivePatientId = null;
+        let activeFilter = 'Waiting';
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view-panel').forEach(panel => panel.classList.add('hidden'));
+            const targetPanel = document.getElementById(`view-${viewId}`);
+            if (targetPanel) targetPanel.classList.remove('hidden');
+            
+            document.getElementById('view-title').innerText = viewId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            if (viewId === 'dashboard') loadDashboardData();
+            if (viewId === 'old-patients') loadOldPatientsTable();
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('hidden');
+        }
+
+        async function saveNewPatient(e) {
+            e.preventDefault();
+            const patientData = {
+                name: document.getElementById('p-name').value,
+                age: parseInt(document.getElementById('p-age').value),
+                gender: document.getElementById('p-gender').value,
+                address: document.getElementById('p-address').value,
+                city: document.getElementById('p-city').value,
+                state: document.getElementById('p-state').value,
+                contact: document.getElementById('p-contact').value,
+                email: document.getElementById('p-email').value,
+                doctor: document.getElementById('p-doctor').value,
+                consultation_fees: parseFloat(document.getElementById('p-fees').value || 0),
+                paid_amount: parseFloat(document.getElementById('p-paid').value || 0),
+                payment_mode: document.getElementById('p-paymode').value,
+                status: 'Waiting'
+            };
+
+            const { error } = await _supabase.from('patients').insert([patientData]);
+            if (error) { 
+                alert('Database Error: ' + error.message); 
+            } else {
+                alert('Patient registration complete. Sent to Waiting list.');
+                document.getElementById('new-patient-form').reset();
+                switchView('dashboard');
+            }
+        }
+
+        async function loadDashboardData() {
+            const { data: patients, error } = await _supabase.from('patients').select('*').order('created_at', { ascending: true });
+            if (error || !patients) return;
+
+            const counts = { Appointments: 0, Waiting: 0, Pharmacy: 0, Procedures: 0 };
+            patients.forEach(p => { if (counts[p.status] !== undefined) counts[p.status]++; });
+
+            document.getElementById('count-appointments').innerText = counts.Appointments;
+            document.getElementById('count-waiting').innerText = counts.Waiting;
+            document.getElementById('count-pharmacy').innerText = counts.Pharmacy;
+            document.getElementById('count-procedures').innerText = counts.Procedures;
+
+            renderQueueTable(patients.filter(p => p.status === activeFilter));
+        }
+
+        function filterDashboard(statusType) {
+            activeFilter = statusType;
+            document.getElementById('queue-title').innerText = `Patients in ${statusType} Queue`;
+            loadDashboardData();
+        }
+
+        function renderQueueTable(filteredPatients) {
+            const tbody = document.getElementById('dashboard-queue-tbody');
+            tbody.innerHTML = '';
+            if (filteredPatients.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center p-6 text-gray-400">No active patient paths inside this interface queue stage.</td></tr>`;
+                return;
+            }
+            filteredPatients.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition cursor-pointer border-b border-gray-100";
+                tr.innerHTML = `
+                    <td class="px-6 py-4 font-semibold text-slate-900">${p.name}</td>
+                    <td class="px-6 py-4">${p.age} / ${p.gender}</td>
+                    <td class="px-6 py-4">${p.doctor}</td>
+                    <td class="px-6 py-4"><span class="px-2 py-1 rounded text-xs font-bold bg-amber-100 text-amber-800">${p.status}</span></td>
+                    <td class="px-6 py-4 text-right"><button class="px-3 py-1 bg-slate-800 text-white rounded text-xs font-medium">Open File</button></td>
+                `;
+                tr.onclick = () => routePatientWorkflow(p);
+                tbody.appendChild(tr);
+            });
+        }
+
+        function routePatientWorkflow(patient) {
+            currentActivePatientId = patient.id;
+            if (patient.status === 'Waiting') {
+                document.getElementById('hist-patient-name').innerText = patient.name;
+                document.getElementById('hist-patient-meta').innerText = `Age: ${patient.age} | Sex: ${patient.gender} | Assigned Provider: ${patient.doctor}`;
+                document.getElementById('history-form').reset();
+                switchView('history-sheet');
+            } else if (patient.status === 'Pharmacy') {
+                loadPharmacyDispenser(patient);
+            }
+        }
+
+        function saveClinicalHistory(e) {
+            e.preventDefault();
+            switchView('prescription');
+            document.getElementById('prescription-items-container').innerHTML = '';
+            addRxRow('medicine');
+        }
+
+        function addRxRow(type) {
+            const container = document.getElementById('prescription-items-container');
+            const rowId = 'rx-' + Date.now();
+            const div = document.createElement('div');
+            div.id = rowId;
+            div.className = "p-4 border border-gray-200 bg-white rounded-lg flex flex-wrap gap-4 items-end";
+            
+            let fieldsHTML = '';
+            if (type === 'medicine') {
+                fieldsHTML = `
+                    <div class="flex-1 min-w-[200px]"><label class="text-xs text-gray-500">Medicine Formulation</label><input type="text" data-field="name" class="rx-input w-full border rounded px-2 py-1 mt-1 text-sm"></div>
+                    <div class="flex-1 min-w-[150px]"><label class="text-xs text-gray-500">Anupana</label><input type="text" data-field="anupana" class="rx-input w-full border rounded px-2 py-1 mt-1 text-sm"></div>
+                    <div class="w-32"><label class="text-xs text-gray-500">Duration (Days)</label><input type="number" data-field="duration" oninput="syncFollowupDuration(this)" class="rx-input w-full border rounded px-2 py-1 mt-1 text-sm"></div>
+                    <div class="flex-1 min-w-[200px]"><label class="text-xs text-gray-500">Instructions</label><input type="text" data-field="instructions" class="rx-input w-full border rounded px-2 py-1 mt-1 text-sm"></div>
+                `;
+            } else if (type === 'diet') {
+                fieldsHTML = `
+                    <div class="flex-1"><label class="text-xs text-gray-500">Dietary Advice Sheet</label><input type="text" data-field="diet" class="rx-input w-full border rounded px-2 py-1 mt-1 text-sm"></div>
+                `;
+            } else if (type === 'procedure') {
+                fieldsHTML = `
+                    <div class="flex-1 min-w-[200px]"><label class="text-xs text-gray-500">Clinical Procedure</label><input type="text" data-field="procedure" class="rx-input w-full border rounded px-2 py-1 mt-1 text-sm"></div>
+                    <div class="flex-1 min-w-[150px]"><label class="text-xs text-gray-500">Medicines Utilized</label><input type="text" data-field="proc_med" class="rx-input w-full border rounded px-2 py-1 mt-1 text-sm"></div>
+                    <div class="w-32"><label class="text-xs text-gray-500">Total Days</label><input type="number" data-field="proc_days" class="rx-input w-full border rounded px-2 py-1 mt-1 text-sm"></div>
+                `;
+            }
+            
+            div.innerHTML = `<span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded font-bold uppercase">${type}</span>` + fieldsHTML + `<button type="button" onclick="document.getElementById('${rowId}').remove()" class="text-red-500 p-1"><i class="fas fa-trash"></i></button>`;
+            container.appendChild(div);
+        }
+
+        function syncFollowupDuration(el) {
+            document.getElementById('rx-followup').value = el.value;
+        }
+
+        async function submitPrescription() {
+            const rxItems = [];
+            document.getElementById('prescription-items-container').childNodes.forEach(node => {
+                if (node.nodeType === 1) {
+                    const rowItem = {};
+                    node.querySelectorAll('.rx-input').forEach(input => { rowItem[input.dataset.field] = input.value; });
+                    rxItems.push(rowItem);
+                }
+            });
+
+            const recordData = {
+                patient_id: currentActivePatientId,
+                hetu: document.getElementById('h-hetu').value,
+                purvarup: document.getElementById('h-purvarup').value,
+                rup: document.getElementById('h-rup').value,
+                upashay_anupashay: document.getElementById('h-upashay').value,
+                nadi: document.getElementById('p-nadi').value,
+                mutra: document.getElementById('p-mutra').value,
+                mala: document.getElementById('p-mala').value,
+                jihva: document.getElementById('p-jihva').value,
+                shabd: document.getElementById('p-shabd').value,
+                sparsh: document.getElementById('p-sparsh').value,
+                druk: document.getElementById('p-druk').value,
+                akruti: document.getElementById('p-akruti').value,
+                agni: document.getElementById('h-agni').value,
+                prakruti: document.getElementById('h-prakruti').value,
+                satmya: document.getElementById('h-satmya').value,
+                satva: document.getElementById('h-satva').value,
+                ahara: document.getElementById('h-ahara').value,
+                investigations: document.getElementById('h-investigations').value,
+                provisional_diagnosis: document.getElementById('h-provisional').value,
+                final_diagnosis: document.getElementById('h-final').value,
+                prescription_json: rxItems,
+                medicine_bill: parseFloat(document.getElementById('rx-bill').value || 0)
+            };
+
+            await _supabase.from('medical_records').insert([recordData]);
+            await _supabase.from('patients').update({ status: 'Pharmacy' }).eq('id', currentActivePatientId);
+            alert('Prescription logged. Forwarded to Pharmacy Station.');
+            switchView('dashboard');
+        }
+
+        async function loadPharmacyDispenser(patient) {
+            document.getElementById('pharm-patient-name').innerText = patient.name;
+            switchView('pharmacy-dispense');
+
+            const { data: records } = await _supabase.from('medical_records').select('*').eq('patient_id', patient.id).order('created_at', { ascending: false }).limit(1);
+            if (records && records.length > 0) {
+                const rec = records[0];
+                document.getElementById('p-total-bill').value = rec.medicine_bill;
+                document.getElementById('p-amt-paid').value = '';
+                document.getElementById('p-balance').value = rec.medicine_bill;
+                
+                const htmlView = document.getElementById('pharmacy-prescription-view');
+                htmlView.innerHTML = '<h5 class="font-bold text-sm text-slate-700 mb-2">Active Orders to Prepare:</h5>';
+                rec.prescription_json.forEach(item => {
+                    if (item.name) htmlView.innerHTML += `<p class="text-sm">💊 <b>${item.name}</b> - ${item.duration} Days (Anupana: ${item.anupana || 'None'}) | ${item.instructions || ''}</p>`;
+                    if (item.diet) htmlView.innerHTML += `<p class="text-sm">🥗 Diet: ${item.diet}</p>`;
+                    if (item.procedure) htmlView.innerHTML += `<p class="text-sm">🧘 Procedure: ${item.procedure} (${item.proc_days} Days)</p>`;
+                });
+            }
+        }
+
+        function calculatePharmacyBalance() {
+            const bill = parseFloat(document.getElementById('p-total-bill').value || 0);
+            const paid = parseFloat(document.getElementById('p-amt-paid').value || 0);
+            document.getElementById('p-balance').value = (bill - paid);
+        }
+
+        async function finalizePharmacyTransaction() {
+            await _supabase.from('medical_records').update({
+                pharmacy_paid: parseFloat(document.getElementById('p-amt-paid').value || 0),
+                pharmacy_payment_mode: document.getElementById('p-pharm-paymode').value
+            }).eq('patient_id', currentActivePatientId);
+
+            await _supabase.from('patients').update({ status: 'Completed' }).eq('id', currentActivePatientId);
+            alert('Pharmacy transaction completed. Record closed.');
+            switchView('dashboard');
+        }
+
+        async function loadOldPatientsTable() {
+            const { data: records } = await _supabase.from('patients').select('*').order('name', { ascending: true });
+            if (!records) return;
+            const tbody = document.getElementById('old-patients-tbody');
+            tbody.innerHTML = '';
+            records.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-gray-100 hover:bg-slate-50 transition";
+                tr.innerHTML = `<td class="p-3 font-semibold text-slate-900">${r.name}</td><td class="p-3">${r.age}/${r.gender}</td><td class="p-3">${r.contact || ''}</td><td class="p-3">${r.doctor}</td><td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold bg-slate-100">${r.status}</span></td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.onload = () => { loadDashboardData(); }
+    </script>
+</body>
+</html>
