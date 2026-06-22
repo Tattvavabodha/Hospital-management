@@ -40,9 +40,9 @@
                 <h2 id="view-title" class="text-xl font-bold text-slate-800 font-serif">शाश्वत् आयुर्वेद–शल्य चिकित्सालय</h2>
             </div>
             <div class="flex items-center gap-4">
-                <span class="text-xs text-gray-500 bg-slate-100 py-1 px-2 rounded font-medium"><i class="fas fa-keyboard mr-1"></i> Supports देवनागरी / Roman</span>
+                <span class="text-xs text-slate-500 font-mono bg-slate-100 px-3 py-1 rounded" id="live-clock-banner"></span>
                 <div class="text-sm text-gray-600 bg-emerald-50 py-1.5 px-3 rounded-full flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Cloud Node Live
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 anonymity-pulse"></span> Cloud Node Live
                 </div>
             </div>
         </header>
@@ -81,7 +81,7 @@
                                     <th class="px-6 py-3 font-medium">Patient Name</th>
                                     <th class="px-6 py-3 font-medium">Age/Sex</th>
                                     <th class="px-6 py-3 font-medium">Assigned Doctor</th>
-                                    <th class="px-6 py-3 font-medium">Status / Type</th>
+                                    <th class="px-6 py-3 font-medium">Encounter Date & Time</th>
                                     <th class="px-6 py-3 font-medium text-right">Action</th>
                                 </tr>
                             </thead>
@@ -143,15 +143,15 @@
                 <div class="border-b pb-2"><h3 class="text-lg font-bold text-gray-800"><i class="fas fa-calendar-check text-emerald-500 mr-2"></i>Appointment Slot Scheduler & Blocking</h3></div>
                 
                 <div class="flex gap-4 border-b pb-4">
-                    <label class="inline-flex items-center"><input type="radio" name="app_type" value="New" checked onchange="toggleAppointmentFormMode(this.value)" class="form-radio text-emerald-600"> <span class="ml-2 font-medium">New Patient Slot (30 Mins)</span></label>
-                    <label class="inline-flex items-center"><input type="radio" name="app_type" value="Old" onchange="toggleAppointmentFormMode(this.value)" class="form-radio text-emerald-600"> <span class="ml-2 font-medium">Old Patient Follow-up (15 Mins)</span></label>
+                    <label class="inline-flex items-center"><input type="radio" name="app_type" value="New" checked onchange="toggleAppointmentFormMode(this.value)" class="form-radio text-emerald-600"> <span class="ml-2 font-medium">New Patient Slot</span></label>
+                    <label class="inline-flex items-center"><input type="radio" name="app_type" value="Old" onchange="toggleAppointmentFormMode(this.value)" class="form-radio text-emerald-600"> <span class="ml-2 font-medium">Old Patient Follow-up</span></label>
                     <label class="inline-flex items-center"><input type="radio" name="app_type" value="Block" onchange="toggleAppointmentFormMode(this.value)" class="form-radio text-red-600"> <span class="ml-2 text-red-600 font-bold">⛔ Admin Block Slot</span></label>
                 </div>
 
                 <form id="appointment-booking-form" onsubmit="handleFormAppointmentSubmit(event)" class="space-y-4">
                     <div id="app-old-suggest-container" class="hidden relative">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Search Old Patient Name *</label>
-                        <input type="text" id="app-search-old-name" oninput="handleAppointmentNameSearch(this.value)" placeholder="Type old patient name to pull profile..." class="w-full border rounded px-3 py-2 outline-none">
+                        <input type="text" id="app-search-old-name" oninput="handleAppointmentNameSearch(this.value)" placeholder="Type name..." class="w-full border rounded px-3 py-2 outline-none">
                         <div id="app-suggest-box" class="absolute bg-white border w-full z-50 rounded shadow hidden max-h-40 overflow-y-auto text-sm mt-1"></div>
                     </div>
 
@@ -159,7 +159,7 @@
                         <div><label class="block text-sm font-medium text-gray-700 mb-1">Patient Name / Purpose</label><input type="text" id="app-name-field" required class="w-full border rounded px-3 py-2 outline-none"></div>
                         <div><label class="block text-sm font-medium text-gray-700 mb-1">Contact Phone No</label><input type="tel" id="app-contact-field" class="w-full border rounded px-3 py-2 outline-none"></div>
                         <div><label class="block text-sm font-medium text-gray-700 mb-1">Age</label><input type="number" id="app-age-field" class="w-full border rounded px-3 py-2 outline-none"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Gender</label><input type="text" id="app-gender-field" placeholder="e.g. Male/Female" class="w-full border rounded px-3 py-2 outline-none"></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Gender</label><input type="text" id="app-gender-field" class="w-full border rounded px-3 py-2 outline-none"></div>
                         <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">Address Info</label><input type="text" id="app-address-field" class="w-full border rounded px-3 py-2 outline-none"></div>
                     </div>
 
@@ -178,17 +178,17 @@
                         <h3 class="text-xl font-bold text-gray-800">Historical Master Patient Database</h3>
                         <p class="text-sm text-gray-500">Search patient ledger to toggle waitlist re-queueing or timeline reviews</p>
                     </div>
-                    <input type="text" id="old-patient-search-input" oninput="searchOldPatientsMasterTable(this.value)" placeholder="Search Name / Contact (Devanagari/Roman)..." class="border-2 border-emerald-400 rounded px-4 py-2 outline-none w-80 font-medium focus:ring-2 focus:ring-emerald-200 bg-white">
+                    <input type="text" id="old-patient-search-input" oninput="searchOldPatientsMasterTable(this.value)" placeholder="Search Name / Contact..." class="border-2 border-emerald-400 rounded px-4 py-2 outline-none w-80 font-medium focus:ring-2 focus:ring-emerald-200 bg-white">
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm border-collapse">
                         <thead>
                             <tr class="bg-slate-100 text-slate-600 uppercase text-xs border-b border-gray-200">
-                                <th class="p-3">Patient Name (Click to Open Full File Timeline)</th>
+                                <th class="p-3">Patient Name</th>
                                 <th class="p-3">Age/Sex</th>
                                 <th class="p-3">Contact</th>
                                 <th class="p-3">Assigned Doctor</th>
-                                <th class="p-3">Last Stage</th>
+                                <th class="p-3">Date Registered</th>
                                 <th class="p-3 text-right">Quick Desk Actions</th>
                             </tr>
                         </thead>
@@ -217,11 +217,13 @@
                         <h3 class="text-xl font-bold text-amber-900 font-serif" id="follow-pt-name">Follow-Up Patient Workspace</h3>
                         <p class="text-xs text-amber-700 font-medium" id="follow-pt-meta">Summary parameters</p>
                     </div>
-                    <span class="bg-amber-700 text-white text-xs px-3 py-1 rounded font-bold uppercase">Anuroga (Follow-up View)</span>
                 </div>
 
                 <div class="bg-slate-50 border p-5 rounded-xl space-y-4" id="followup-historical-reference-box">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 border-b pb-1 flex items-center gap-1"><i class="fas fa-history text-slate-400"></i> Review of Previous Visit Records</h4>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 border-b pb-1 flex items-center justify-between">
+                        <span><i class="fas fa-history text-slate-400 mr-1"></i> Review of Previous Visit Records</span>
+                        <span class="bg-slate-200 px-2 py-0.5 rounded font-mono text-slate-700" id="followup-prev-date-badge">Date: --</span>
+                    </h4>
                     <div id="followup-reference-content" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-700"></div>
                 </div>
 
@@ -230,22 +232,22 @@
                     
                     <div class="bg-white border rounded-xl p-4 space-y-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Symptoms Present Now (Current State / Improvement or Worsening notes)</label>
+                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Symptoms Present Now</label>
                             <textarea id="f-symptoms-now" rows="3" placeholder="Enter tracking metrics, status parameters, or structural patient notes here..." class="w-full border rounded p-2 outline-none bg-slate-50 focus:bg-white focus:border-emerald-500"></textarea>
                         </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                             <div>
                                 <label class="font-bold text-slate-600 uppercase block mb-1">New Hetu Revealed</label>
-                                <textarea id="f-new-hetu" rows="2" placeholder="Any new causes discovered..." class="w-full border rounded p-2 outline-none"></textarea>
+                                <textarea id="f-new-hetu" rows="2" class="w-full border rounded p-2 outline-none"></textarea>
                             </div>
                             <div>
                                 <label class="font-bold text-slate-600 uppercase block mb-1">New Upashaya / Anupashaya Point</label>
-                                <textarea id="f-new-upashay" rows="2" placeholder="Therapeutic trial responses noted..." class="w-full border rounded p-2 outline-none"></textarea>
+                                <textarea id="f-new-upashay" rows="2" class="w-full border rounded p-2 outline-none"></textarea>
                             </div>
                             <div>
                                 <label class="font-bold text-slate-600 uppercase block mb-1">Avastha of Disease at this Time</label>
-                                <textarea id="f-disease-avastha" rows="2" placeholder="Current staging of the Vyadhi..." class="w-full border rounded p-2 outline-none"></textarea>
+                                <textarea id="f-disease-avastha" rows="2" class="w-full border rounded p-2 outline-none"></textarea>
                             </div>
                         </div>
                     </div>
@@ -265,8 +267,8 @@
                     <div class="border-t pt-4 grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-xl">
                         <div><label class="block text-sm font-medium text-gray-700 mb-1">Follow up Plan (Days)</label><input type="number" id="f-rx-followup" class="w-full border bg-white rounded px-3 py-2 outline-none"></div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Medicine Bill Amount [Supports inline expressions e.g. 100+200+5]</label>
-                            <input type="text" id="f-rx-bill" value="0" onkeydown="handleInlineBillingMath(event, this)" placeholder="Type digits and press Enter" class="w-full border border-emerald-400 bg-white font-bold rounded px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-200">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Medicine Bill Amount</label>
+                            <input type="text" id="f-rx-bill" value="0" onkeydown="handleInlineBillingMath(event, this)" class="w-full border border-emerald-400 bg-white font-bold rounded px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-200">
                         </div>
                     </div>
 
@@ -278,42 +280,71 @@
             </div>
 
             <div id="view-history-sheet" class="view-panel hidden max-w-5xl mx-auto bg-white p-8 rounded-xl shadow space-y-6">
-                <div class="border-b pb-4"><h3 class="text-xl font-bold text-slate-800" id="hist-patient-name">Patient Name</h3><p class="text-sm text-gray-500" id="hist-patient-meta">Patient Info</p></div>
+                <div class="border-b pb-4 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800" id="hist-patient-name">Patient Name</h3>
+                        <p class="text-sm text-gray-500" id="hist-patient-meta">Age/Sex/ID</p>
+                    </div>
+                    <span class="bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full font-medium">Physician Assessment Console</span>
+                </div>
+
                 <form id="history-form" onsubmit="saveClinicalHistory(event)">
-                    <h4 class="text-emerald-700 font-semibold mb-3 border-b pb-1 text-md uppercase tracking-wider">Clinical Manifestation (Nidana Panchaka)</h4>
+                    <h4 class="text-emerald-700 font-semibold mb-3 border-b pb-1 text-md uppercase tracking-wider">Arogya History (Nidana Panchaka)</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Hetu (Causes)</label><textarea id="h-hetu" rows="2" class="w-full border border-gray-300 rounded p-2 outline-none"></textarea></div>
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Purvarup (Prodromal Symptoms)</label><textarea id="h-purvarup" rows="2" class="w-full border border-gray-300 rounded p-2 outline-none"></textarea></div>
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Rup (Manifested Symptoms)</label><textarea id="h-rup" rows="2" class="w-full border border-gray-300 rounded p-2 outline-none"></textarea></div>
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Upashay-Anupashay</label><textarea id="h-upashay" rows="2" class="w-full border border-gray-300 rounded p-2 outline-none"></textarea></div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Hetu (Causes)</label>
+                            <textarea id="h-hetu" rows="2" class="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-emerald-500 outline-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Purvarup (Prodromal Symptoms)</label>
+                            <textarea id="h-purvarup" rows="2" class="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-emerald-500 outline-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Rup (Manifested Symptoms)</label>
+                            <textarea id="h-rup" rows="2" class="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-emerald-500 outline-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Upashay-Anupashay (Therapeutic Trial)</label>
+                            <textarea id="h-upashay" rows="2" class="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-emerald-500 outline-none"></textarea>
+                        </div>
                     </div>
 
-                    <h4 class="text-emerald-700 font-semibold mb-3 border-b pb-1 text-md uppercase tracking-wider">Ashtavidha Parikshanam & Attributes</h4>
+                    <h4 class="text-emerald-700 font-semibold mb-3 border-b pb-1 text-md uppercase tracking-wider">Ashtavidha Parikshanam & Personal Examination</h4>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 bg-slate-50 p-4 rounded-lg">
-                        <div><label class="text-xs text-gray-600">Nadi</label><input type="text" id="p-nadi" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
-                        <div><label class="text-xs text-gray-600">Mutra</label><input type="text" id="p-mutra" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
-                        <div><label class="text-xs text-gray-600">Mala</label><input type="text" id="p-mala" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
-                        <div><label class="text-xs text-gray-600">Jihva</label><input type="text" id="p-jihva" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
-                        <div><label class="text-xs text-gray-600">Shabd</label><input type="text" id="p-shabd" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
-                        <div><label class="text-xs text-gray-600">Sparsh</label><input type="text" id="p-sparsh" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
-                        <div><label class="text-xs text-gray-600">Druk</label><input type="text" id="p-druk" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
-                        <div><label class="text-xs text-gray-600">Akruti</label><input type="text" id="p-akruti" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs font-medium text-gray-600">Nadi</label><input type="text" id="p-nadi" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs font-medium text-gray-600">Mutra</label><input type="text" id="p-mutra" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs font-medium text-gray-600">Mala</label><input type="text" id="p-mala" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs font-medium text-gray-600">Jihva</label><input type="text" id="p-jihva" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs font-medium text-gray-600">Shabd</label><input type="text" id="p-shabd" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs font-medium text-gray-600">Sparsh</label><input type="text" id="p-sparsh" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs font-medium text-gray-600">Druk</label><input type="text" id="p-druk" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs font-medium text-gray-600">Akruti</label><input type="text" id="p-akruti" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 mb-6">
-                        <div><label class="text-xs text-gray-600">Agni</label><input type="text" id="h-agni" class="w-full border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
-                        <div><label class="text-xs text-gray-600">Prakruti</label><input type="text" id="h-prakruti" class="w-full border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
-                        <div><label class="text-xs text-gray-600">Satmya</label><input type="text" id="h-satmya" class="w-full border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
-                        <div><label class="text-xs text-gray-600">Satva</label><input type="text" id="h-satva" class="w-full border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
-                        <div><label class="text-xs text-gray-600">Ahara</label><input type="text" id="h-ahara" class="w-full border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs font-semibold uppercase text-gray-600">Agni</label><input type="text" id="h-agni" class="w-full border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs font-semibold uppercase text-gray-600">Prakruti</label><input type="text" id="h-prakruti" class="w-full border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs font-semibold uppercase text-gray-600">Satmya</label><input type="text" id="h-satmya" class="w-full border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs font-semibold uppercase text-gray-600">Satva</label><input type="text" id="h-satva" class="w-full border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
+                        <div><label class="text-xs font-semibold uppercase text-gray-600">Ahara</label><input type="text" id="h-ahara" class="w-full border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <div><label class="block text-xs text-gray-600 mb-1">Investigations</label><textarea id="h-investigations" rows="2" class="w-full border rounded p-2 outline-none"></textarea></div>
-                        <div><label class="block text-xs text-gray-600 mb-1">Vyadhivinishchayah (Provisional)</label><textarea id="h-provisional" rows="2" class="w-full border rounded p-2 outline-none"></textarea></div>
-                        <div><label class="block text-xs text-gray-600 mb-1">Vyadhivinishchayah (Final)</label><textarea id="h-final" rows="2" class="w-full border rounded p-2 outline-none"></textarea></div>
+                        <div class="md:col-span-1">
+                            <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Investigations</label>
+                            <textarea id="h-investigations" rows="2" class="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-emerald-500 outline-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Vyadhivinishchayah (Provisional)</label>
+                            <textarea id="h-provisional" rows="2" class="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-emerald-500 outline-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Vyadhivinishchayah (Final)</label>
+                            <textarea id="h-final" rows="2" class="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-emerald-500 outline-none"></textarea>
+                        </div>
                     </div>
-                    <button type="submit" class="w-full py-3 bg-emerald-600 text-white font-bold rounded shadow-sm">Save Parameters & Load Prescription</button>
+
+                    <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded shadow-sm">Save History & Open Prescription Sheet</button>
                 </form>
             </div>
 
@@ -394,6 +425,13 @@
         let cacheInventoryDrugs = [];
         let activeCombinationsArr = {};
 
+        // Live Operational Clock Interface Display Controller
+        function updateLiveClock() {
+            const now = new Date();
+            document.getElementById('live-clock-banner').innerText = now.toLocaleDateString() + ' | ' + now.toLocaleTimeString();
+        }
+        setInterval(updateLiveClock, 1000);
+
         function switchView(viewId) {
             document.querySelectorAll('.view-panel').forEach(panel => panel.classList.add('hidden'));
             const targetPanel = document.getElementById(`view-${viewId}`);
@@ -417,7 +455,6 @@
             return 'units';
         }
 
-        // INLINE EXPRESSION PARSER (Evaluates strings like 100+200+5 on Enter keydown)
         function handleInlineBillingMath(event, el) {
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -425,9 +462,8 @@
                 if (!textExpression) return;
                 
                 try {
-                    // Sanitize evaluation inputs to allow arithmetic operations safely
                     const sanitized = textExpression.replace(/[^0-9+\-*/.]/g, '');
-                    const result = Function(`"use strict"; return (${sanitized})`)();
+                    const result = Function("\"use strict\"; return (" + sanitized + ")")();
                     el.value = isNaN(result) ? "0" : result;
                 } catch (err) {
                     alert('Invalid math expression format entered.');
@@ -485,7 +521,7 @@
             matches.forEach(m => {
                 const row = document.createElement('div');
                 row.className = "p-2 hover:bg-slate-100 cursor-pointer border-b font-medium";
-                row.innerText = `${m.name} (${m.contact || 'No Phone'})`;
+                row.innerText = m.name + " (" + (m.contact || 'No Phone') + ")";
                 row.onclick = () => {
                     document.getElementById('app-search-old-name').value = m.name;
                     document.getElementById('app-name-field').value = m.name;
@@ -549,6 +585,7 @@
         function renderOldPatientsMasterRows(arr) {
             const tbody = document.getElementById('old-patients-tbody'); tbody.innerHTML = '';
             arr.forEach(p => {
+                const dateString = p.created_at ? new Date(p.created_at).toLocaleDateString() : 'Previous';
                 const tr = document.createElement('tr');
                 tr.className = "border-b border-gray-100 hover:bg-slate-50 transition text-sm text-slate-700";
                 tr.innerHTML = `
@@ -556,7 +593,7 @@
                     <td class="p-3">${p.age} / ${p.gender}</td>
                     <td class="p-3">${p.contact || 'N/A'}</td>
                     <td class="p-3 font-medium">${p.doctor}</td>
-                    <td class="p-3"><span class="px-2 py-0.5 text-xs rounded font-bold bg-slate-100">${p.status}</span></td>
+                    <td class="p-3 font-mono text-xs">${dateString}</td>
                     <td class="p-3 text-right">
                         <button onclick="sendOldPatientToWaitingList(${p.id})" class="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded shadow-2xs"><i class="fas fa-walking mr-1"></i> Send to Waitlist</button>
                     </td>
@@ -604,9 +641,9 @@
                 card.innerHTML = `
                     <div class="flex justify-between items-center bg-slate-50 p-2 rounded border text-xs">
                         <span class="font-bold text-slate-700">Encounter Sequence #${records.length - idx}</span>
-                        <span class="text-gray-500">${new Date(r.created_at).toLocaleString()}</span>
+                        <span class="text-gray-500 font-mono">${new Date(r.created_at).toLocaleString()}</span>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div class="grid grid-cols-2 md:grid-cols-2 gap-4 text-xs">
                         <div class="border p-3 rounded bg-slate-50/50">
                             <span class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Nidana Panchaka Parameters</span>
                             <p><b>Hetu:</b> ${r.hetu || 'Nil'}</p><p><b>Purvarup:</b> ${r.purvarup || 'Nil'}</p>
@@ -652,19 +689,19 @@
                 return;
             }
             arr.forEach(p => {
+                const timeString = p.created_at ? new Date(p.created_at).toLocaleString() : '--';
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 border-b transition text-sm text-slate-700">
                         <td class="px-6 py-4 font-bold text-slate-900">${p.name}</td>
                         <td class="px-6 py-4">${p.age} / ${p.gender}</td>
                         <td class="px-6 py-4">${p.doctor}</td>
-                        <td class="px-6 py-4"><span class="px-2 py-0.5 rounded text-xs font-bold ${p.status=='Appointments'?'bg-blue-100 text-blue-800':'bg-amber-100 text-amber-800'}">${p.status}</span></td>
+                        <td class="px-6 py-4 font-mono text-xs text-slate-500">${timeString}</td>
                         <td class="px-6 py-4 text-right"><button onclick="executePhysicianRoutingWorkflow(${p.id}, '${p.status}')" class="px-3 py-1 bg-slate-900 text-white hover:bg-emerald-600 rounded text-xs font-bold">Process File</button></td>
                     </tr>
                 `;
             });
         }
 
-        // RE-STRUCTURED VISIT REFERENCE VIEW BINDING HOOKS
         async function executePhysicianRoutingWorkflow(id, status) {
             currentActivePatientId = id;
             const pt = cachePatientsRaw.find(p => p.id === id); if(!pt) return;
@@ -674,39 +711,42 @@
                 
                 if (pastRecords && pastRecords.length > 0) {
                     // LAUNCH AUTOMATED CLEAN FOLLOW-UP SHEET
-                    document.getElementById('follow-pt-name').innerText = `Follow-Up Workspace: ${pt.name}`;
-                    document.getElementById('follow-pt-meta').innerText = `Age: ${pt.age} | Physician: ${pt.doctor}`;
+                    document.getElementById('follow-pt-name').innerText = `Follow-Up Workspace: ` + pt.name;
+                    document.getElementById('follow-pt-meta').innerText = `Age: ` + pt.age + ` | Physician: ` + pt.doctor;
                     switchView('followup-treatment');
                     
                     const refContent = document.getElementById('followup-reference-content');
                     const lastRec = pastRecords[0];
+
+                    // Bind exact calendar timestamp of previous checkout visit to the UI badge element cleanly
+                    const prevVisitDate = lastRec.created_at ? new Date(lastRec.created_at).toLocaleDateString() : 'N/A';
+                    document.getElementById('followup-prev-date-badge').innerText = `Previous Visit Date: ` + prevVisitDate;
                     
                     let rxListHTML = '';
                     if(lastRec.prescription_json && Array.isArray(lastRec.prescription_json)) {
                         lastRec.prescription_json.forEach((item, lIdx) => {
                             if(item.type === 'medicine' && item.formulations) {
-                                rxListHTML += `<div><b>${lIdx + 1}) ${item.formulations.join(' + ')}</b> - ${item.sevan_kaala || 'N/A'} (Anupana: ${item.anupana || 'None'})</div>`;
+                                rxListHTML += `<div><b>` + (lIdx + 1) + `) ` + item.formulations.join(' + ') + `</b> - ` + (item.sevan_kaala || 'N/A') + ` (Anupana: ` + (item.anupana || 'None') + `)</div>`;
                             }
                         });
                     }
 
-                    // Render past profiles cleanly mapped into standard sections
                     refContent.innerHTML = `
                         <div class="bg-white p-3 rounded border text-xs">
                             <span class="text-[10px] font-bold text-slate-400 block mb-1 uppercase tracking-wide">Previous History (Nidana Panchaka)</span>
-                            <div><b>Hetu:</b> ${lastRec.hetu || 'Nil'}</div><div><b>Purvarup:</b> ${lastRec.purvarup || 'Nil'}</div>
-                            <div><b>Rup:</b> ${lastRec.rup || 'Nil'}</div><div><b>Upashay-Anupashay:</b> ${lastRec.upashay_anupashay || 'Nil'}</div>
+                            <div><b>Hetu:</b> ` + (lastRec.hetu || 'Nil') + `</div><div><b>Purvarup:</b> ` + (lastRec.purvarup || 'Nil') + `</div>
+                            <div><b>Rup:</b> ` + (lastRec.rup || 'Nil') + `</div><div><b>Upashay-Anupashay:</b> ` + (lastRec.upashay_anupashay || 'Nil') + `</div>
                         </div>
                         <div class="bg-white p-3 rounded border text-xs">
                             <span class="text-[10px] font-bold text-slate-400 block mb-1 uppercase tracking-wide">Previous Treatment Formulations Given</span>
-                            <div class="space-y-1 mt-1 text-slate-800 font-medium">${rxListHTML || 'No historical medicines found.'}</div>
+                            <div class="space-y-1 mt-1 text-slate-800 font-medium">` + (rxListHTML || 'No historical medicines found.') + `</div>
                         </div>
                     `;
                     document.getElementById('followup-prescription-items-container').innerHTML = '';
                     addRxRowCombined('medicine');
                 } else {
                     document.getElementById('hist-patient-name').innerText = pt.name;
-                    document.getElementById('hist-patient-meta').innerText = `Age: ${pt.age} | ID: #${pt.id}`;
+                    document.getElementById('hist-patient-meta').innerText = `Age: ` + pt.age + ` | ID: #` + pt.id;
                     document.getElementById('history-form').reset();
                     switchView('history-sheet');
                 }
@@ -725,10 +765,10 @@
             if (type === 'medicine') {
                 html = `
                     <div class="flex-1 min-w-[260px] relative">
-                        <label class="font-bold text-gray-600">Medicine Type/Name [Type Search / Enter to Add Combination Line]</label>
-                        <input type="text" data-row="${rowId}" oninput="handleLiveMateriaMedicaQueryCombined(this)" onkeydown="interceptPharmacyEntryKeyCombined(event, this, '${rowId}')" placeholder="Type formulation name..." class="autocomplete-rx w-full border rounded px-3 py-1.5 mt-1 outline-none">
-                        <div class="absolute bg-white border z-50 w-full rounded shadow hidden max-h-32 overflow-y-auto text-xs" id="box-${rowId}"></div>
-                        <div id="stack-${rowId}" class="mt-2 flex flex-wrap gap-1"></div>
+                        <label class="font-bold text-gray-600">Medicine Type/Name</label>
+                        <input type="text" data-row="` + rowId + `" oninput="handleLiveMateriaMedicaQueryCombined(this)" onkeydown="interceptPharmacyEntryKeyCombined(event, this, '` + rowId + `')" placeholder="Type formulation name..." class="autocomplete-rx w-full border rounded px-3 py-1.5 mt-1 outline-none">
+                        <div class="absolute bg-white border z-50 w-full rounded shadow hidden max-h-32 overflow-y-auto text-xs" id="box-` + rowId + `"></div>
+                        <div id="stack-` + rowId + `" class="mt-2 flex flex-wrap gap-1"></div>
                     </div>
                     <div class="w-40"><label class="font-bold text-gray-600">Aushadh Sevan Kaala</label><input type="text" placeholder="e.g. sakali dupari jevana nanatar" data-field="sevan_kaala" class="rx-meta-f w-full border rounded p-1.5 mt-1"></div>
                     <div class="flex-1"><label class="font-bold text-gray-500">Anupana</label><input type="text" data-field="anupana" class="rx-meta-f w-full border rounded p-1.5 mt-1"></div>
@@ -745,13 +785,13 @@
                     <div class="w-20"><label class="font-bold text-gray-600">Days</label><input type="number" data-field="proc_days" class="rx-meta-f w-full border rounded p-1.5 mt-1"></div>
                 `;
             }
-            div.innerHTML = `<span class="bg-slate-100 text-slate-700 px-2 py-1 rounded font-bold uppercase">${type}</span>` + html + `<button type="button" onclick="document.getElementById('${rowId}').remove()" class="text-red-500 p-1"><i class="fas fa-trash"></i></button>`;
+            div.innerHTML = `<span class="bg-slate-100 text-slate-700 px-2 py-1 rounded font-bold uppercase">` + type + `</span>` + html + `<button type="button" onclick="document.getElementById('` + rowId + `').remove()" class="text-red-500 p-1"><i class="fas fa-trash"></i></button>`;
             container.appendChild(div);
             activeCombinationsArr[rowId] = [];
         }
 
         function handleLiveMateriaMedicaQueryCombined(el) {
-            const rowId = el.dataset.row; const box = document.getElementById(`box-${rowId}`);
+            const rowId = el.dataset.row; const box = document.getElementById("box-" + rowId);
             const query = el.value.toLowerCase().trim().split('(')[0].trim(); if(!query) { box.classList.add('hidden'); return; }
             const matches = cacheInventoryDrugs.filter(d => d.name.toLowerCase().includes(query));
             if(matches.length === 0) { box.classList.add('hidden'); return; }
@@ -759,7 +799,7 @@
             matches.forEach(m => {
                 const row = document.createElement('div'); row.className = "p-1.5 hover:bg-slate-100 cursor-pointer border-b font-medium"; row.innerText = m.name;
                 row.onclick = () => {
-                    const unit = computeFormulationUnit(m.name); el.value = `${m.name} (${unit})`; el.focus();
+                    const unit = computeFormulationUnit(m.name); el.value = m.name + " (" + unit + ")"; el.focus();
                     const index = el.value.indexOf(')'); el.setSelectionRange(index, index); box.classList.add('hidden');
                 };
                 box.appendChild(row);
@@ -772,9 +812,9 @@
                 activeCombinationsArr[rowId].push(val);
                 const chip = document.createElement('span');
                 chip.className = "bg-emerald-100 text-emerald-900 border border-emerald-300 font-bold px-2 py-0.5 rounded text-xs flex items-center";
-                chip.innerHTML = `${val} <i class="fas fa-times-circle cursor-pointer ml-1 text-emerald-600" onclick="this.parentElement.remove()"></i>`;
-                document.getElementById(`stack-${rowId}`).appendChild(chip);
-                el.value = ''; document.getElementById(`box-${rowId}`).classList.add('hidden');
+                chip.innerHTML = val + ` <i class="fas fa-times-circle cursor-pointer ml-1 text-emerald-600" onclick="this.parentElement.remove()"></i>`;
+                document.getElementById("stack-" + rowId).appendChild(chip);
+                el.value = ''; document.getElementById("box-" + rowId).classList.add('hidden');
             }
         }
 
@@ -808,7 +848,7 @@
             const targetStatus = hasProceduresPlanned ? 'Procedures' : 'Pharmacy';
             await _supabase.from('patients').update({ status: targetStatus }).eq('id', currentActivePatientId);
             
-            alert(`Follow-up data finalized successfully. File sent to ${targetStatus}.`);
+            alert('Follow-up record successfully saved.');
             switchView('dashboard');
         }
 
@@ -818,7 +858,7 @@
         async function submitPrescription() { alert('Prescription changes saved.'); switchView('dashboard'); }
         async function loadTherapyScheduleHub() {
             const cal = document.getElementById('calendar-days-container'); cal.innerHTML = '';
-            for(let d=1; d<=14; d++) { cal.innerHTML += `<div class="bg-white border p-1 min-h-[50px] font-bold text-gray-400">June ${d}</div>`; }
+            for(let d=1; d<=14; d++) { cal.innerHTML += `<div class="bg-white border p-1 min-h-[50px] font-bold text-gray-400">June ` + d + `</div>`; }
         }
         async function loadPharmacyDispenser(patient) {
             document.getElementById('pharm-patient-name').innerText = patient.name; switchView('pharmacy-dispense');
@@ -839,7 +879,7 @@
             alert('Transaction completed.'); switchView('dashboard');
         }
 
-        window.onload = () => { loadDashboardData(); pullActiveDrugsList(); }
+        window.onload = () => { loadDashboardData(); pullActiveDrugsList(); updateLiveClock(); }
     </script>
 </body>
 </html>
