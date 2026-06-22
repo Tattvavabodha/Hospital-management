@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>शाश्वत् आयुर्वेद–शल्य चिकित्सालय - HMS</title>
+    <!-- Tailwind CSS for Modern Interface Design -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Stable Global Supabase Module Implementation -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.8/dist/umd/supabase.js"></script>
+    <!-- FontAwesome Vector Icon Asset Pack -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
@@ -13,6 +16,7 @@
 </head>
 <body class="bg-gray-50 font-sans flex h-screen overflow-hidden">
 
+    <!-- COLLAPSIBLE SIDEBAR MENU NAVIGATION -->
     <div id="sidebar" class="bg-slate-900 text-white w-64 transition-all duration-300 flex flex-col justify-between hidden md:flex">
         <div class="p-4">
             <div class="flex items-center justify-between mb-2">
@@ -33,7 +37,9 @@
         </div>
     </div>
 
+    <!-- MAIN INTERFACE VIEW WORKSPACE -->
     <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- GLOBAL APPLICATION NAVIGATION BAR -->
         <header class="bg-white shadow px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-4">
                 <button onclick="toggleSidebar()" class="md:hidden text-slate-800"><i class="fas fa-bars text-xl"></i></button>
@@ -42,13 +48,15 @@
             <div class="flex items-center gap-4">
                 <span class="text-xs text-slate-500 font-mono bg-slate-100 px-3 py-1 rounded" id="live-clock-banner"></span>
                 <div class="text-sm text-gray-600 bg-emerald-50 py-1.5 px-3 rounded-full flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 anonymity-pulse"></span> Cloud Node Live
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Cloud Node Live
                 </div>
             </div>
         </header>
 
+        <!-- ACTIVE SYSTEM WORKSPACE VIEWS CONTAINER -->
         <main class="flex-1 overflow-y-auto p-6">
             
+            <!-- VIEW: DASHBOARD PIPELINES -->
             <div id="view-dashboard" class="view-panel space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div onclick="filterDashboard('Appointments')" class="bg-white p-6 rounded-xl shadow border-l-4 border-blue-500 cursor-pointer hover:shadow-md transition">
@@ -69,6 +77,7 @@
                     </div>
                 </div>
 
+                <!-- Dynamic Dashboard Main Pipeline Table -->
                 <div class="bg-white rounded-xl shadow overflow-hidden">
                     <div class="bg-slate-100 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                         <h3 id="queue-title" class="font-semibold text-gray-700">Patients in Waiting Queue</h3>
@@ -91,6 +100,7 @@
                 </div>
             </div>
 
+            <!-- VIEW: NEW PATIENT ENTRY -->
             <div id="view-new-patient" class="view-panel hidden max-w-4xl mx-auto bg-white p-8 rounded-xl shadow">
                 <form id="new-patient-form" onsubmit="saveNewPatient(event)" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -139,6 +149,7 @@
                 </form>
             </div>
 
+            <!-- VIEW: SLOT BOOKER MODULE -->
             <div id="view-block-slots" class="view-panel hidden max-w-2xl mx-auto bg-white p-8 rounded-xl shadow space-y-6">
                 <div class="border-b pb-2"><h3 class="text-lg font-bold text-gray-800"><i class="fas fa-calendar-check text-emerald-500 mr-2"></i>Appointment Slot Scheduler & Blocking</h3></div>
                 
@@ -172,6 +183,7 @@
                 </form>
             </div>
 
+            <!-- VIEW: MASTER OLD PATIENT LIST -->
             <div id="view-old-patients" class="view-panel hidden bg-white p-6 rounded-xl shadow space-y-4">
                 <div class="flex flex-wrap justify-between items-center gap-4 border-b pb-4">
                     <div>
@@ -197,6 +209,7 @@
                 </div>
             </div>
 
+            <!-- VIEW: FULL CLINICAL CASE TIMELINE REVIEW CONSOLE -->
             <div id="view-timeline-review" class="view-panel hidden max-w-5xl mx-auto bg-white p-8 rounded-xl shadow space-y-6">
                 <div class="border-b pb-4 flex justify-between items-center bg-slate-900 text-white p-4 rounded-xl shadow-xs">
                     <div>
@@ -211,6 +224,7 @@
                 </div>
             </div>
 
+            <!-- VIEW: FOLLOW-UP ASSESSMENT SHEET -->
             <div id="view-followup-treatment" class="view-panel hidden max-w-5xl mx-auto bg-white p-8 rounded-xl shadow space-y-6">
                 <div class="border-b pb-4 bg-amber-50 border border-amber-200 p-4 rounded-lg flex justify-between items-center">
                     <div>
@@ -219,6 +233,7 @@
                     </div>
                 </div>
 
+                <!-- Structured Historical Reference Blocks displaying Date of Previous Visit -->
                 <div class="bg-slate-50 border p-5 rounded-xl space-y-4" id="followup-historical-reference-box">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 border-b pb-1 flex items-center justify-between">
                         <span><i class="fas fa-history text-slate-400 mr-1"></i> Review of Previous Visit Records</span>
@@ -252,6 +267,7 @@
                         </div>
                     </div>
 
+                    <!-- Prescription Layer -->
                     <div class="border-t pt-4">
                         <div class="flex justify-between items-center mb-3">
                             <h4 class="text-emerald-700 font-semibold text-md uppercase tracking-wider">Prescription Plan (Rx)</h4>
@@ -279,6 +295,7 @@
                 </form>
             </div>
 
+            <!-- VIEW: PHYSICIAN CLINICAL HISTORY SHEET -->
             <div id="view-history-sheet" class="view-panel hidden max-w-5xl mx-auto bg-white p-8 rounded-xl shadow space-y-6">
                 <div class="border-b pb-4 flex justify-between items-center">
                     <div>
@@ -289,6 +306,7 @@
                 </div>
 
                 <form id="history-form" onsubmit="saveClinicalHistory(event)">
+                    <!-- Nidana Panchaka Fields -->
                     <h4 class="text-emerald-700 font-semibold mb-3 border-b pb-1 text-md uppercase tracking-wider">Arogya History (Nidana Panchaka)</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div>
@@ -309,6 +327,7 @@
                         </div>
                     </div>
 
+                    <!-- Parikshanam Fields -->
                     <h4 class="text-emerald-700 font-semibold mb-3 border-b pb-1 text-md uppercase tracking-wider">Ashtavidha Parikshanam & Personal Examination</h4>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 bg-slate-50 p-4 rounded-lg">
                         <div><label class="text-xs font-medium text-gray-600">Nadi</label><input type="text" id="p-nadi" class="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
@@ -329,6 +348,7 @@
                         <div><label class="text-xs font-semibold uppercase text-gray-600">Ahara</label><input type="text" id="h-ahara" class="w-full border border-gray-300 rounded px-2 py-1 text-sm mt-0.5"></div>
                     </div>
 
+                    <!-- Diagnosis Panel -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <div class="md:col-span-1">
                             <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Investigations</label>
@@ -348,6 +368,7 @@
                 </form>
             </div>
 
+            <!-- VIEW: PANCHAKARMA THERAPY HUB -->
             <div id="view-therapy" class="view-panel hidden bg-white p-6 rounded-xl shadow space-y-6">
                 <div class="flex justify-between items-center border-b pb-4">
                     <div>
@@ -383,6 +404,23 @@
                 </div>
             </div>
 
+            <!-- VIEW: PHARMACY DISPENSARY CONSOLE -->
+            <div id="view-pharmacy-dispense" class="view-panel hidden max-w-3xl mx-auto bg-white p-8 rounded-xl shadow space-y-6">
+                <div class="border-b pb-4"><h3 class="text-xl font-bold text-slate-800" id="pharm-patient-name">Patient Name</h3><p class="text-sm text-gray-500">Active Formulation Verification</p></div>
+                
+                <!-- CLEAN STRUCTURED DISPENSARY VIEW FOR THE PHARMACIST -->
+                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-3" id="pharmacy-prescription-view"></div>
+                
+                <div class="border-t pt-6 grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase">Total Bill</label><input type="number" id="p-total-bill" readonly class="w-full bg-gray-100 border rounded px-3 py-2 font-bold mt-1 text-slate-800"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase">Amount Paid</label><input type="number" id="p-amt-paid" oninput="calculatePharmacyBalance()" class="w-full border-2 border-emerald-500 rounded px-3 py-2 mt-1 font-bold outline-none"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase">Balance Due</label><input type="number" id="p-balance" readonly class="w-full bg-gray-100 border rounded px-3 py-2 text-red-600 font-bold mt-1"></div>
+                    <div><label class="block text-xs font-bold text-gray-600 uppercase">Payment Mode</label><select id="p-pharm-paymode" class="w-full border rounded px-3 py-2 mt-1 outline-none"><option value="Cash">Cash</option><option value="QR">QR</option><option value="Other">Other</option></select></div>
+                </div>
+                <button onclick="finalizePharmacyTransaction()" class="w-full py-3 bg-emerald-600 text-white font-bold rounded shadow uppercase tracking-wide text-sm">Discharge Patient & Lock Records</button>
+            </div>
+
+            <!-- VIEW: MEDICINE STOCK INVENTORY PANEL -->
             <div id="view-inventory" class="view-panel hidden bg-white p-6 rounded-xl shadow space-y-6">
                 <div class="flex flex-wrap justify-between items-center gap-4 border-b pb-4">
                     <div><h3 class="text-xl font-bold text-gray-800">Materia Medica Stock Inventory</h3></div>
@@ -410,6 +448,7 @@
         </main>
     </div>
 
+    <!-- CENTRAL RUNTIME SYSTEM JAVASCRIPT ARCHITECTURE ENGINE -->
     <script>
         const SUPABASE_URL = 'https://zbkkeorfljwbidbxkoor.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_hcgJxA9sl9x4Y6EVbmpiQw_8dfU6NoL';
@@ -425,7 +464,6 @@
         let cacheInventoryDrugs = [];
         let activeCombinationsArr = {};
 
-        // Live Operational Clock Interface Display Controller
         function updateLiveClock() {
             const now = new Date();
             document.getElementById('live-clock-banner').innerText = now.toLocaleDateString() + ' | ' + now.toLocaleTimeString();
@@ -591,7 +629,7 @@
                 tr.innerHTML = `
                     <td class="p-3 font-semibold text-slate-900 cursor-pointer hover:text-emerald-600" onclick="launchCaseTimelineReview(${p.id})">📁 ${p.name}</td>
                     <td class="p-3">${p.age} / ${p.gender}</td>
-                    <td class="p-3">${p.contact || 'N/A'}</td>
+                    <td class="p-3">${r.contact || 'N/A'}</td>
                     <td class="p-3 font-medium">${p.doctor}</td>
                     <td class="p-3 font-mono text-xs">${dateString}</td>
                     <td class="p-3 text-right">
@@ -710,7 +748,6 @@
                 const { data: pastRecords } = await _supabase.from('medical_records').select('*').eq('patient_id', id).order('created_at', { ascending: false });
                 
                 if (pastRecords && pastRecords.length > 0) {
-                    // LAUNCH AUTOMATED CLEAN FOLLOW-UP SHEET
                     document.getElementById('follow-pt-name').innerText = `Follow-Up Workspace: ` + pt.name;
                     document.getElementById('follow-pt-meta').innerText = `Age: ` + pt.age + ` | Physician: ` + pt.doctor;
                     switchView('followup-treatment');
@@ -718,7 +755,6 @@
                     const refContent = document.getElementById('followup-reference-content');
                     const lastRec = pastRecords[0];
 
-                    // Bind exact calendar timestamp of previous checkout visit to the UI badge element cleanly
                     const prevVisitDate = lastRec.created_at ? new Date(lastRec.created_at).toLocaleDateString() : 'N/A';
                     document.getElementById('followup-prev-date-badge').innerText = `Previous Visit Date: ` + prevVisitDate;
                     
@@ -860,15 +896,71 @@
             const cal = document.getElementById('calendar-days-container'); cal.innerHTML = '';
             for(let d=1; d<=14; d++) { cal.innerHTML += `<div class="bg-white border p-1 min-h-[50px] font-bold text-gray-400">June ` + d + `</div>`; }
         }
+
+        // PHARMACY MODULE CLEAN VIEW PARSER RECONSTRUCTION
         async function loadPharmacyDispenser(patient) {
-            document.getElementById('pharm-patient-name').innerText = patient.name; switchView('pharmacy-dispense');
+            document.getElementById('pharm-patient-name').innerText = patient.name; 
+            switchView('pharmacy-dispense');
+
             const { data: records } = await _supabase.from('medical_records').select('*').eq('patient_id', patient.id).order('created_at', { ascending: false }).limit(1);
+            
+            const htmlView = document.getElementById('pharmacy-prescription-view');
+            htmlView.innerHTML = '';
+
             if (records && records.length > 0) {
-                document.getElementById('p-total-bill').value = records[0].medicine_bill;
-                document.getElementById('p-balance').value = records[0].medicine_bill;
-                document.getElementById('pharmacy-prescription-view').innerHTML = `<p class="text-sm">💊 Active Prescribed Compounded Blocks Pipeline Ready for Handout Prep.</p>`;
+                const rec = records[0];
+                document.getElementById('p-total-bill').value = rec.medicine_bill;
+                document.getElementById('p-balance').value = rec.medicine_bill;
+                
+                let medCount = 1;
+                let hasMedicines = false;
+
+                // Create a clean layout container for the pharmacist
+                let medicineListHTML = `<div class="space-y-4">
+                    <h5 class="font-bold text-sm text-slate-800 border-b pb-1 uppercase tracking-wide"><i class="fas fa-pills text-emerald-600 mr-1"></i> Prescribed Formulations Sheet</h5>
+                    <ol class="space-y-3 font-medium text-slate-700">`;
+
+                rec.prescription_json.forEach(item => {
+                    if (item.type === 'medicine' && item.formulations && item.formulations.length > 0) {
+                        hasMedicines = true;
+                        medicineListHTML += `
+                            <li class="p-3 bg-white rounded border border-slate-200 shadow-2xs">
+                                <div class="text-sm text-slate-900 font-bold mb-1">${medCount}) ${item.formulations.join(' + ')}</div>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-slate-600 mt-1.5 pt-1.5 border-t border-dashed border-slate-200">
+                                    <div><span class="font-semibold block text-slate-400 uppercase text-[9px]">Aushadh Sevan Kaala</span> <span class="text-slate-800 font-bold">${item.sevan_kaala || 'N/A'}</span></div>
+                                    <div><span class="font-semibold block text-slate-400 uppercase text-[9px]">Anupana</span> <span class="text-slate-800 font-bold">${item.anupana || 'None'}</span></div>
+                                    <div><span class="font-semibold block text-slate-400 uppercase text-[9px]">Duration</span> <span class="text-emerald-700 font-bold">${item.duration || '--'} Days</span></div>
+                                    <div><span class="font-semibold block text-slate-400 uppercase text-[9px]">Instructions</span> <span class="text-slate-800">${item.instructions || 'None'}</span></div>
+                                </div>
+                            </li>`;
+                        medCount++;
+                    } else if (item.type === 'diet' && item.diet) {
+                        medicineListHTML += `
+                            <li class="p-3 bg-amber-50/50 rounded border border-amber-200 text-xs">
+                                <span class="font-bold text-amber-800 uppercase block text-[9px] mb-1">🥗 Pathya-Apathya Diet Advice</span>
+                                <span class="text-slate-700 font-medium">${item.diet}</span>
+                            </li>`;
+                    } else if (item.type === 'procedure' && item.proc_name) {
+                        medicineListHTML += `
+                            <li class="p-3 bg-purple-50/50 rounded border border-purple-200 text-xs">
+                                <span class="font-bold text-purple-800 uppercase block text-[9px] mb-1">🧘 Scheduled Karma / Procedure</span>
+                                <span class="text-slate-700 font-medium"><b>${item.proc_name}</b> using ${item.proc_drug || 'None'} (${item.proc_days || '--'} Days)</span>
+                            </li>`;
+                    }
+                });
+
+                medicineListHTML += `</ol></div>`;
+                
+                if (!hasMedicines) {
+                    htmlView.innerHTML = `<p class="text-sm text-slate-500 text-center p-4">No specific medical formulations or combinations to dispense for this session card.</p>`;
+                } else {
+                    htmlView.innerHTML = medicineListHTML;
+                }
+            } else {
+                htmlView.innerHTML = `<p class="text-sm text-slate-400 text-center p-4">No historical records found for this active reference point context.</p>`;
             }
         }
+
         function calculatePharmacyBalance() {
             const bill = parseFloat(document.getElementById('p-total-bill').value || 0);
             const paid = parseFloat(document.getElementById('p-amt-paid').value || 0);
@@ -877,6 +969,19 @@
         async function finalizePharmacyTransaction() {
             await _supabase.from('patients').update({ status: 'Completed' }).eq('id', currentActivePatientId);
             alert('Transaction completed.'); switchView('dashboard');
+        }
+
+        async function loadOldPatientsTable() {
+            const { data: records } = await _supabase.from('patients').select('*').order('name', { ascending: true });
+            if (!records) return;
+            const tbody = document.getElementById('old-patients-tbody');
+            tbody.innerHTML = '';
+            records.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-gray-100 hover:bg-slate-50 text-slate-700 transition";
+                tr.innerHTML = `<td class="p-3 font-semibold text-slate-900">${r.name}</td><td class="p-3">${r.age}/${r.gender}</td><td class="p-3">${r.contact || ''}</td><td class="p-3">${r.doctor}</td><td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold bg-slate-100">${r.status}</span></td>`;
+                tbody.appendChild(tr);
+            });
         }
 
         window.onload = () => { loadDashboardData(); pullActiveDrugsList(); updateLiveClock(); }
